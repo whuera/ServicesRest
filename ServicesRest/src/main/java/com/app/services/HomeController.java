@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.app.modelo.Contacto;
 import com.app.service.impl.ServiceContact;
 
+
 /**
  * Handles requests for the application home page.
  */
@@ -87,4 +88,17 @@ public class HomeController {
 				return contact.getInformationAllPersons();			
 	}
 	
+	/**
+	 * Gets the all contact by id.
+	 *
+	 * @param id the id
+	 * @return the all contact by id
+	 */
+	@RequestMapping(value="/allContactById",method = RequestMethod.GET)
+	public @ResponseBody ArrayList<Contacto> getAllContactById(@RequestParam(value="id",required=true) String idContact)
+	{		
+		ServiceContact contact = new ServiceContact();
+		logger.info("generate json object contact.", contact.toString());
+				return contact.getContactById(idContact);			
+	}
 }
