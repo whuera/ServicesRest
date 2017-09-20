@@ -7,15 +7,25 @@ import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.app.modelo.AddressContact;
 import com.app.modelo.Contacto;
+import com.app.service.impl.ServiceAddressContact;
 import com.app.service.impl.ServiceContact;
+
+
+
+
 
 
 /**
@@ -91,7 +101,7 @@ public class HomeController {
 	/**
 	 * Gets the all contact by id.
 	 *
-	 * @param id the id
+	 * @param idContact the id contact
 	 * @return the all contact by id
 	 */
 	@RequestMapping(value="/allContactById",method = RequestMethod.GET)
@@ -101,4 +111,43 @@ public class HomeController {
 		logger.info("generate json object contact.", contact.toString());
 				return contact.getContactById(idContact);			
 	}
+	
+	
+	/**
+	 * Gets the all contact address by id.
+	 *
+	 * @param idContact the id contact
+	 * @return the all contact address by id
+	 */
+	@RequestMapping(value="/allContactAddressById",method = RequestMethod.GET)
+	public @ResponseBody ArrayList<AddressContact> getAllContactAddressById(@RequestParam(value="id",required=true) int idContact)
+	{		
+		ServiceAddressContact contactAddress = new ServiceAddressContact();
+		logger.info("generate json object contact.", contactAddress.toString());
+				return contactAddress.getAddressByIdContact(idContact);			
+	}
+	
+	
+	/**
+	 * Save contact.
+	 * @param <Response>
+	 *
+	 * @param contact the contact
+	 * @return true, if successful
+	 */
+	
+	@RequestMapping(value="/saveContact", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Contacto> saveContact (@RequestBody Contacto contact)
+	{		
+		ServiceContact contactObject = new ServiceContact();
+		Contacto contactTemp = new Contacto();
+		contactTemp = contact;
+		logger.info("generate json object contact.", contact.toString());
+		contactObject.saveContact(contact);
+				return new ResponseEntity<Contacto>(contactTemp,HttpStatus.CREATED);
+
+	}
+	
+	
+	
 }

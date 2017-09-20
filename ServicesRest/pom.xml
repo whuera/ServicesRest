@@ -156,6 +156,16 @@
 			<version>3.1.0</version>
 			<type>maven-plugin</type>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
+<dependency>
+    <groupId>javax.ws.rs</groupId>
+    <artifactId>javax.ws.rs-api</artifactId>
+    <version>2.0</version>
+</dependency>
+		
+		
+		
 	</dependencies>
     <build>
         <plugins>
@@ -186,6 +196,14 @@
             	<artifactId>maven-compiler-plugin</artifactId>
             	<version>2.5.1</version>
             </plugin>
+             <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <warName>ServicesRest</warName>
+        </configuration>
+      </plugin>
         </plugins>
     </build>
     <packaging>war</packaging>
