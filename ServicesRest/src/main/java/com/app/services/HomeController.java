@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.app.modelo.AddressContact;
 import com.app.modelo.Contacto;
+import com.app.modelo.Entidades;
 import com.app.service.impl.ServiceAddressContact;
 import com.app.service.impl.ServiceContact;
+import com.app.service.impl.ServiceEntidades;
 
 
 
@@ -137,17 +139,23 @@ public class HomeController {
 	 */
 	
 	@RequestMapping(value="/saveContact", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Contacto> saveContact (@RequestBody Contacto contact)
+	public ResponseEntity<Entidades> saveContact (@RequestBody Contacto contact)
 	{		
 		ServiceContact contactObject = new ServiceContact();
-		Contacto contactTemp = new Contacto();
-		contactTemp = contact;
+		ServiceEntidades contactNew = new ServiceEntidades();
+		//Contacto contactTemp = new Contacto();
+		Entidades entidades = new Entidades();
+		//contactTemp = contact;
 		logger.info("generate json object contact.", contact.toString());
-		contactObject.saveContact(contact);
-				return new ResponseEntity<Contacto>(contactTemp,HttpStatus.CREATED);
+		String idContact = contactObject.saveContact(contact);
+		logger.info("id : "+idContact);
+		entidades = contactNew.getEntidad(idContact);
+		logger.info("contacto creado :"+entidades.toString());
+				return new ResponseEntity<Entidades>(entidades,HttpStatus.CREATED);
+				//return ResponseEntity;
+		
 
 	}
-	
 	
 	
 }
