@@ -1,5 +1,6 @@
 package com.app.services;
 
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,12 +22,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.app.modelo.AddressContact;
 import com.app.modelo.Contacto;
 import com.app.modelo.Entidades;
+import com.app.modelo.InformacionFinanciera;
 import com.app.service.impl.ServiceAddressContact;
 import com.app.service.impl.ServiceContact;
 import com.app.service.impl.ServiceEntidades;
-
-
-
+import com.app.service.impl.ServiceProducts;
 
 
 
@@ -111,7 +111,7 @@ public class HomeController {
 	{		
 		ServiceContact contact = new ServiceContact();
 		logger.info("generate json object contact.", contact.toString());
-				return contact.getContactById(idContact);			
+				return contact.getContactById(idContact.trim());			
 	}
 	
 	
@@ -132,30 +132,80 @@ public class HomeController {
 	
 	/**
 	 * Save contact.
-	 * @param <Response>
 	 *
-	 * @param contact the contact
+	 * @param entidades the entidades
 	 * @return true, if successful
 	 */
 	
 	@RequestMapping(value="/saveContact", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Entidades> saveContact (@RequestBody Contacto contact)
+	public ResponseEntity<Entidades> saveContact (@RequestBody Entidades entidades)
 	{		
-		ServiceContact contactObject = new ServiceContact();
-		ServiceEntidades contactNew = new ServiceEntidades();
-		//Contacto contactTemp = new Contacto();
-		Entidades entidades = new Entidades();
-		//contactTemp = contact;
-		logger.info("generate json object contact.", contact.toString());
-		String idContact = contactObject.saveContact(contact);
+		ServiceEntidades entidadesServiceNew = new ServiceEntidades();	
+		Entidades entidadesReturn = new Entidades();
+		logger.info("generate json object contact.", entidades.toString());
+		String idContact = null;
+		try {
+			idContact = entidadesServiceNew.saveEntidad(entidades);
+		} catch (SQLException e) {
+			logger.error(e.getMessage());		
+		}
 		logger.info("id : "+idContact);
-		entidades = contactNew.getEntidad(idContact);
-		logger.info("contacto creado :"+entidades.toString());
-				return new ResponseEntity<Entidades>(entidades,HttpStatus.CREATED);
-				//return ResponseEntity;
-		
-
+		entidadesReturn = entidadesServiceNew.getEntidad(idContact);
+		logger.info("contacto creado :"+entidadesReturn.toString());
+				return new ResponseEntity<Entidades>(entidadesReturn,HttpStatus.CREATED);					
 	}
+	
+	
+	/**
+	 * Gets the credentials.
+	 *
+	 * @param entidades the entidades
+	 * @return the credentials
+	 */
+	@RequestMapping(value="/getCredentials",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody int getCredentials(@RequestBody Entidades entidades)
+	{	int valRetur = 0;
+		ServiceEntidades serviceEntidades = new ServiceEntidades();		
+		valRetur = 	serviceEntidades.getCredentinals(entidades.getLogin(),entidades.getPassword());
+		System.out.println("valRetur :: "+valRetur);
+		logger.info("generate json object valRetur. ", valRetur);
+		return valRetur;
+									
+	}
+	
+	/**
+	 * Gets the credentials by object.
+	 *
+	 * @param entidades the entidades
+	 * @return the credentials by object
+	 */
+	@RequestMapping(value="/getCredentialsByObject",method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Entidades getCredentialsByObject(@RequestBody Entidades entidades)
+	{	
+		ServiceEntidades serviceEntidades = new ServiceEntidades();
+		Entidades entidadesObject = new Entidades();
+		entidadesObject = 	serviceEntidades.getCredentinalsByObject(entidades.getLogin(),entidades.getPassword());
+		System.out.println("entidadesObject :: "+entidadesObject.toString());
+		logger.info("generate json object entidadesObject. ", entidadesObject.toString());
+		return entidadesObject;
+									
+	}
+	
+	
+	/**
+	 * Gets the products finance by id.
+	 *
+	 * @param idContact the id contact
+	 * @return the products finance by id
+	 */
+	@RequestMapping(value="/getProductsFinanceById",method = RequestMethod.GET)
+	public @ResponseBody ArrayList<InformacionFinanciera> getProductsFinanceById(@RequestParam(value="id",required=true) String idContact)
+	{		
+		ServiceProducts serviceProducts = new ServiceProducts();
+		logger.info("generate json object products.");
+				return serviceProducts.getProducts(idContact);			
+	}
+	
 	
 	
 }
